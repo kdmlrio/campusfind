@@ -508,61 +508,100 @@
         }
     });
 
+ 
     // =====================================================
     // 12. PUBLIC CLAIM STATUS CHECKER
     // =====================================================
 
-    claimStatusForm?.addEventListener("submit", async event => {
-        event.preventDefault();
-
-        const reference = $("claimReferenceInput")?.value.trim().toUpperCase();
-
-        if (!reference) return;
+    async function checkClaimStatus() {
+        const reference = $("claimReferenceInput")?.value
+            .trim()
+            .toUpperCase();
 
         const result = $("claimStatusResult");
-        if (!result) return;
 
+        if (!reference || !result) return;
+
+        // Show the result area
+        show(result);
         result.textContent = "Checking claim status...";
 
-        const { data, error } = await supabase.rpc(
-            "check_claim_status",
-            { ref: reference }
-        );
+        try {
+            const { data, error } = await supabase.rpc(
+                "check_claim_status",
+                { ref: reference }
+            );
 
-        if (error) {
-            console.error(error);
-            result.textContent = "Unable to check status. Please try again.";
-            return;
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+                result.textContent =
+                    "No claim found. Please check your reference number.";
+                return;
+            }
+
+            const claim = data[0];
+
+            result.innerHTML = `
+                <div class="claim-status-card">
+                    <h3>Claim Status</h3>
+
+                    <p><strong>Reference:</strong>
+                        ${escapeHTML(claim.claim_reference)}
+                    </p>
+
+                    <p><strong>Item:</strong>
+                        ${escapeHTML(claim.item_name)}
+                    </p>
+
+                    <p><strong>Status:</strong>
+                        <span class="status-badge ${statusClass(claim.status)}">
+                            ${escapeHTML(claim.status)}
+                        </span>
+                    </p>
+
+                    <p><strong>Submitted:</strong>
+                        ${formatDate(claim.created_at)}
+                    </p>
+
+                    ${claim.approved_at ? `
+                        <p><strong>Approved:</strong>
+                            ${formatDate(claim.approved_at)}
+                        </p>
+                    ` : ""}
+
+                    ${claim.rejected_at ? `
+                        <p><strong>Rejected:</strong>
+                            ${formatDate(claim.rejected_at)}
+                        </p>
+                    ` : ""}
+
+                    ${claim.released_at ? `
+                        <p><strong>Released:</strong>
+                            ${formatDate(claim.released_at)}
+                        </p>
+                    ` : ""}
+
+                    ${claim.closed_at ? `
+                        <p><strong>Closed:</strong>
+                            ${formatDate(claim.closed_at)}
+                        </p>
+                    ` : ""}
+                </div>
+            `;
+
+        } catch (error) {
+            console.error("Claim status error:", error);
+            result.textContent =
+                "Unable to check status: " + error.message;
         }
+    }
 
-        if (!data || !data.length) {
-            result.textContent = "No claim found. Please check your reference number.";
-            return;
-        }
-
-        const claim = data[0];
-
-        result.innerHTML = `
-            <div class="claim-status-card">
-                <h3>Claim Status</h3>
-                <p><strong>Reference:</strong>
-                    ${escapeHTML(claim.claim_reference)}</p>
-                <p><strong>Item:</strong>
-                    ${escapeHTML(claim.item_name)}</p>
-                <p><strong>Status:</strong>
-                    <span class="status-badge ${statusClass(claim.status)}">
-                        ${escapeHTML(claim.status)}
-                    </span>
-                </p>
-                <p><strong>Submitted:</strong>
-                    ${formatDate(claim.created_at)}</p>
-                ${claim.approved_at ? `<p><strong>Approved:</strong> ${formatDate(claim.approved_at)}</p>` : ""}
-                ${claim.rejected_at ? `<p><strong>Rejected:</strong> ${formatDate(claim.rejected_at)}</p>` : ""}
-                ${claim.released_at ? `<p><strong>Released:</strong> ${formatDate(claim.released_at)}</p>` : ""}
-                ${claim.closed_at ? `<p><strong>Closed:</strong> ${formatDate(claim.closed_at)}</p>` : ""}
-            </div>
-        `;
+    claimStatusForm?.addEventListener("submit", async event => {
+        event.preventDefault();
+        await checkClaimStatus();
     });
+
 
     // =====================================================
     // 13. PAGE NAVIGATION

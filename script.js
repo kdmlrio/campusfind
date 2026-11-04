@@ -514,7 +514,6 @@
     // 12. PUBLIC CLAIM STATUS CHECKER
     // =====================================================
 
-    const claimStatusForm = $("claimStatusForm");
     const claimStatusResult = $("claimStatusResult");
 
     async function checkClaimStatus(event) {

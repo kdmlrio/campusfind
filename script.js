@@ -993,23 +993,44 @@
     // =====================================================
 
     async function restoreAdminSession() {
-        const { data } = await supabase.auth.getSession();
-        const session = data?.session;
+    const { data, error: sessionError } =
+        await supabase.auth.getSession();
 
-        if (!session) return;
-
-        const { data: role } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", session.user.id)
-            .maybeSingle();
-
-        if (role?.role === "admin") {
-            currentAdmin = session.user;
-            showDashboard();
-            await loadClaims();
-        }
+    if (sessionError) {
+        console.error("Session error:", sessionError);
+        return;
     }
+
+    const session = data?.session;
+
+    if (!session) {
+        console.log("No active admin session.");
+        return;
+    }
+
+    console.log("Logged in user ID:", session.user.id);
+
+    const { data: role, error: roleError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+    if (roleError) {
+        console.error("Admin role error:", roleError);
+        return;
+    }
+
+    console.log("Admin role result:", role);
+
+    if (role?.role === "admin") {
+        currentAdmin = session.user;
+        showDashboard();
+        await loadClaims();
+    } else {
+        console.error("Access denied. Admin role not found.");
+    }
+}
 
     // =====================================================
     // 20. INITIALIZE WEBSITE

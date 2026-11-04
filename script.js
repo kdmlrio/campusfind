@@ -1,17 +1,7 @@
 
-/* =========================================================
-   CAMPUSFIND - PATEROS TECHNOLOGICAL COLLEGE
-   Supabase Connected Version
-   Database: Supabase
-   Photo Storage: Supabase Storage
-========================================================= */
-
 (async function () {
     "use strict";
 
-    // =====================================================
-    // 1. SUPABASE CONNECTION
-    // =====================================================
 
     const SUPABASE_URL = "https://earnzkvqjmaksbfagrfe.supabase.co";
     const SUPABASE_KEY = "sb_publishable_26Vo87zi-Lr0bBYNE8HE9w_v4cUPFhA";
@@ -23,9 +13,6 @@
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // =====================================================
-    // 2. ELEMENTS
-    // =====================================================
 
     const $ = (id) => document.getElementById(id);
 
@@ -44,9 +31,6 @@
     let selectedPhoto = null;
     let currentAdmin = null;
 
-    // =====================================================
-    // 3. HELPERS
-    // =====================================================
 
     function escapeHTML(value = "") {
         return String(value).replace(/[&<>"']/g, char => ({
@@ -120,10 +104,6 @@
         alert(message);
     }
 
-    // =====================================================
-    // 4. DATABASE - LOAD REPORTS
-    // =====================================================
-
     async function loadReports() {
         const { data, error } = await supabase
             .from("reports")
@@ -142,9 +122,6 @@
         updateDashboardCounts();
     }
 
-    // =====================================================
-    // 5. DATABASE - LOAD CLAIMS (ADMIN ONLY)
-    // =====================================================
 
     async function loadClaims() {
         if (!currentAdmin) return;
@@ -164,10 +141,6 @@
         renderAdminClaims();
         updateDashboardCounts();
     }
-
-    // =====================================================
-    // 6. PUBLIC REPORT DISPLAY
-    // =====================================================
 
     function renderReports() {
         const container = $("itemList");
@@ -260,10 +233,6 @@
         openClaimModal(button.dataset.reportId);
     });
 
-    // =====================================================
-    // 7. PHOTO PREVIEW
-    // =====================================================
-
     $("itemPhoto")?.addEventListener("change", event => {
         const file = event.target.files?.[0];
 
@@ -308,9 +277,6 @@
         hide($("photoPreviewContainer"));
     });
 
-    // =====================================================
-    // 8. UPLOAD PHOTO TO SUPABASE STORAGE
-    // =====================================================
 
     async function uploadPhoto(file) {
         if (!file) return null;
@@ -349,9 +315,6 @@
         return data.publicUrl;
     }
 
-    // =====================================================
-    // 9. SUBMIT LOST / FOUND REPORT
-    // =====================================================
 
     reportForm?.addEventListener("submit", async event => {
         event.preventDefault();
@@ -409,9 +372,6 @@
         }
     });
 
-    // =====================================================
-    // 10. CLAIM MODAL
-    // =====================================================
 
     function openClaimModal(reportId) {
         selectedReport = reports.find(report => report.id === reportId);
@@ -441,10 +401,6 @@
             closeClaimModal();
         }
     });
-
-    // =====================================================
-    // 11. SUBMIT CLAIM
-    // =====================================================
 
     claimForm?.addEventListener("submit", async event => {
         event.preventDefault();
@@ -507,12 +463,6 @@
             setButtonLoading(button, false, "Submit Claim");
         }
     });
-
- 
-    
-    // =====================================================
-    // 12. PUBLIC CLAIM STATUS CHECKER
-    // =====================================================
 
     const claimStatusResult = $("claimStatusResult");
 
@@ -603,11 +553,6 @@
 
     claimStatusForm?.addEventListener("submit", checkClaimStatus);
 
-
-    // =====================================================
-    // 13. PAGE NAVIGATION
-    // =====================================================
-
     function showPublicPage() {
         show(publicPage);
         hide(adminLoginPage);
@@ -690,10 +635,6 @@ if (!role || role.role !== "admin") {
         }
     });
 
-    // =====================================================
-    // 15. ADMIN DASHBOARD COUNTS
-    // =====================================================
-
     function updateDashboardCounts() {
         const total = reports.length;
         const totalClaims = claims.length;
@@ -705,10 +646,6 @@ if (!role || role.role !== "admin") {
         if ($("totalClaims")) $("totalClaims").textContent = totalClaims;
         if ($("pendingClaims")) $("pendingClaims").textContent = pendingClaims;
     }
-
-    // =====================================================
-    // 16. ADMIN REPORT MANAGEMENT
-    // =====================================================
 
     function renderAdminReports() {
         const container = $("adminReports");
@@ -830,10 +767,6 @@ if (!role || role.role !== "admin") {
             notify("Report deleted successfully.");
         }
     });
-
-    // =====================================================
-    // 17. ADMIN CLAIM MANAGEMENT
-    // =====================================================
 
     function renderAdminClaims() {
         const container = $("adminClaims");
@@ -977,10 +910,6 @@ if (!role || role.role !== "admin") {
         notify("Claim updated successfully.");
     });
 
-    // =====================================================
-    // 18. ADMIN LOGOUT
-    // =====================================================
-
     $("logoutAdmin")?.addEventListener("click", async () => {
         const { error } = await supabase.auth.signOut();
 
@@ -994,10 +923,6 @@ if (!role || role.role !== "admin") {
         showPublicPage();
         await loadReports();
     });
-
-    // =====================================================
-    // 19. RESTORE ADMIN SESSION
-    // =====================================================
 
     async function restoreAdminSession() {
     const { data, error: sessionError } =
@@ -1038,10 +963,6 @@ if (!role || role.role !== "admin") {
         console.error("Access denied. Admin role not found.");
     }
 }
-
-    // =====================================================
-    // 20. INITIALIZE WEBSITE
-    // =====================================================
 
     try {
         await loadReports();

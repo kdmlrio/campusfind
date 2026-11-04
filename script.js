@@ -509,22 +509,26 @@
     });
 
  
+    
     // =====================================================
     // 12. PUBLIC CLAIM STATUS CHECKER
     // =====================================================
 
-    async function checkClaimStatus() {
+    const claimStatusForm = $("claimStatusForm");
+    const claimStatusResult = $("claimStatusResult");
+
+    async function checkClaimStatus(event) {
+        if (event) event.preventDefault();
+
         const reference = $("claimReferenceInput")?.value
-            .trim()
+            ?.trim()
             .toUpperCase();
 
-        const result = $("claimStatusResult");
+        if (!reference || !claimStatusResult) return;
 
-        if (!reference || !result) return;
-
-        // Show the result area
-        show(result);
-        result.textContent = "Checking claim status...";
+        claimStatusResult.classList.remove("hidden");
+        claimStatusResult.style.display = "block";
+        claimStatusResult.innerHTML = "Checking claim status...";
 
         try {
             const { data, error } = await supabase.rpc(
@@ -532,34 +536,35 @@
                 { ref: reference }
             );
 
-            if (error) throw error;
+            if (error) {
+                console.error("RPC Error:", error);
+                claimStatusResult.textContent =
+                    "Error checking status: " + error.message;
+                return;
+            }
 
             if (!data || data.length === 0) {
-                result.textContent =
+                claimStatusResult.textContent =
                     "No claim found. Please check your reference number.";
                 return;
             }
 
             const claim = data[0];
 
-            result.innerHTML = `
+            claimStatusResult.innerHTML = `
                 <div class="claim-status-card">
                     <h3>Claim Status</h3>
-
                     <p><strong>Reference:</strong>
                         ${escapeHTML(claim.claim_reference)}
                     </p>
-
                     <p><strong>Item:</strong>
                         ${escapeHTML(claim.item_name)}
                     </p>
-
                     <p><strong>Status:</strong>
                         <span class="status-badge ${statusClass(claim.status)}">
                             ${escapeHTML(claim.status)}
                         </span>
                     </p>
-
                     <p><strong>Submitted:</strong>
                         ${formatDate(claim.created_at)}
                     </p>
@@ -591,16 +596,13 @@
             `;
 
         } catch (error) {
-            console.error("Claim status error:", error);
-            result.textContent =
+            console.error("Claim Status Error:", error);
+            claimStatusResult.textContent =
                 "Unable to check status: " + error.message;
         }
     }
 
-    claimStatusForm?.addEventListener("submit", async event => {
-        event.preventDefault();
-        await checkClaimStatus();
-    });
+    claimStatusForm?.addEventListener("submit", checkClaimStatus);
 
 
     // =====================================================

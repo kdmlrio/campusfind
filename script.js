@@ -658,10 +658,17 @@
                 .eq("user_id", user.id)
                 .maybeSingle();
 
-            if (roleError || !role || role.role !== "admin") {
-                await supabase.auth.signOut();
-                throw new Error("Access denied. Admin account only.");
-            }
+            if (roleError) {
+    console.error("ROLE QUERY ERROR:", roleError);
+    throw roleError;
+}
+
+console.log("ADMIN ROLE RESULT:", role);
+
+if (!role || role.role !== "admin") {
+    await supabase.auth.signOut();
+    throw new Error("Access denied. Admin account only.");
+}
 
             currentAdmin = user;
 

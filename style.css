@@ -1205,4 +1205,40 @@ button:disabled {
         width: 100%;
         margin: 7px 0 0;
     }
+
+   
+/* Make Claim This Item match the other primary buttons */
+
+#itemList .claim-item-btn {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 43px !important;
+    padding: 12px 21px !important;
+    margin-top: 12px !important;
+
+    background: var(--green) !important;
+    color: white !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+
+    font-family: 'DM Sans', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1.6 !important;
+
+    box-shadow: none !important;
+    transition: .2s ease !important;
+}
+
+#itemList .claim-item-btn:hover {
+    background: var(--green-dark) !important;
+    transform: translateY(-2px);
+}
+
+#itemList .claim-item-btn:active {
+    transform: translateY(0);
+}
+
 }

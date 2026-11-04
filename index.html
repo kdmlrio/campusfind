@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusFind | Pateros Technological College</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <a href="#" class="brand" onclick="showPublicPage()">
+    <span class="brand-icon">CF</span>
+    <span>Campus<span class="brand-green">Find</span><small>PTC Lost & Found Portal</small></span>
+  </a>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#browse">Browse Items</a>
+    <a href="#report">Report Item</a>
+    <a href="#claim-status">Claim Status</a>
+    <a href="#about">About</a>
+    <button class="admin-link" id="openAdmin">Admin</button>
+  </nav>
+</header>
+
+<main id="publicPage">
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <span class="eyebrow">PAT EROS TECHNOLOGICAL COLLEGE</span>
+      <h1>Lost something?<br><span>Find it here.</span></h1>
+      <p>A simple and convenient way for PTC students and personnel to report, find, and claim lost belongings.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#browse">Browse Items</a>
+        <a class="btn btn-outline" href="#report">Report an Item</a>
+      </div>
+      <div class="hero-note">A safer campus starts with helping one another.</div>
+    </div>
+    <div class="hero-art">
+      <div class="hero-circle">🔎</div>
+      <div class="floating-card card-one">📱 <span>Lost Item</span></div>
+      <div class="floating-card card-two">🎒 <span>Found Item</span></div>
+      <div class="floating-card card-three">✓ <span>Claim Safely</span></div>
+    </div>
+  </section>
+
+  <section class="steps section">
+    <div class="section-heading">
+      <span class="eyebrow">HOW IT WORKS</span>
+      <h2>Find it. Report it. Claim it.</h2>
+      <p>Three simple steps to help reunite people with their belongings.</p>
+    </div>
+    <div class="step-grid">
+      <article class="step-card"><div class="step-icon">🔍</div><h3>1. Browse Items</h3><p>Check the available lost and found listings.</p></article>
+      <article class="step-card"><div class="step-icon">📝</div><h3>2. Submit a Request</h3><p>Report an item or submit a claim request.</p></article>
+      <article class="step-card"><div class="step-icon">🤝</div><h3>3. Verify and Claim</h3><p>Wait for approval, then proceed to the Registrar's Office.</p></article>
+    </div>
+  </section>
+
+  <section class="section browse-section" id="browse">
+    <div class="section-heading">
+      <span class="eyebrow">CAMPUS LISTINGS</span>
+      <h2>Browse Lost & Found Items</h2>
+      <p>Search the available listings below.</p>
+    </div>
+    <div class="browse-tools">
+      <input type="search" id="searchInput" placeholder="Search item name or description...">
+      <select id="filterType">
+        <option value="All">All Items</option>
+        <option value="Lost">Lost Items</option>
+        <option value="Found">Found Items</option>
+      </select>
+    </div>
+    <div id="itemList" class="item-grid"></div>
+    <p id="emptyMessage" class="empty-message hidden">No items found. Try another search.</p>
+  </section>
+
+  <section class="section report-section" id="report">
+    <div class="section-heading">
+      <span class="eyebrow">HELP THE COMMUNITY</span>
+      <h2>Report an Item</h2>
+      <p>Share the details so the rightful owner can find their belongings.</p>
+    </div>
+    <form id="reportForm" class="form-card">
+      <div class="form-grid">
+        <div class="field">
+          <label for="itemName">Item Name *</label>
+          <input id="itemName" required maxlength="80" placeholder="e.g. Black wallet">
+        </div>
+        <div class="field">
+          <label for="itemType">Report Type *</label>
+          <select id="itemType" required>
+            <option value="">Select type</option>
+            <option value="Lost">I lost an item</option>
+            <option value="Found">I found an item</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="itemLocation">Location *</label>
+          <input id="itemLocation" required maxlength="120" placeholder="Where was it lost or found?">
+        </div>
+        <div class="field full">
+          <label for="itemDescription">Description *</label>
+          <textarea id="itemDescription" required maxlength="500" rows="4" placeholder="Describe the item. Avoid sharing private passwords or sensitive information."></textarea>
+        </div>
+        <div class="field full">
+          <label for="itemPhoto">Upload Item Photo (Optional)</label>
+          <input type="file" id="itemPhoto" accept="image/png,image/jpeg,image/webp">
+          <small>JPG, PNG, or WebP. Maximum file size: 5MB.</small>
+          <div id="photoPreviewContainer" class="photo-preview hidden">
+            <img id="photoPreview" alt="Selected item preview">
+            <button type="button" class="btn btn-small btn-danger" id="removePhoto">Remove Photo</button>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit Report</button>
+      <p id="formMessage" class="form-message" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="section status-section" id="claim-status">
+    <div class="section-heading">
+      <span class="eyebrow">CLAIM TRACKER</span>
+      <h2>Check Your Claim Status</h2>
+      <p>Enter the Claim Reference Number you received after submitting your request.</p>
+    </div>
+    <form id="claimStatusForm" class="status-search">
+      <input id="claimReferenceInput" required placeholder="Example: CF-2026-ABC123" autocomplete="off">
+      <button class="btn btn-primary" type="submit">Check Status</button>
+    </form>
+    <div id="claimStatusResult" class="status-result hidden" aria-live="polite"></div>
+  </section>
+
+  <section class="reminder-section section">
+    <div class="reminder-icon">📌</div>
+    <div>
+      <span class="eyebrow">IMPORTANT REMINDER</span>
+      <h2>Keep your belongings safe.</h2>
+      <p>For lost or found belongings that need assistance, students and personnel may proceed to the <strong>Registrar's Office of Pateros Technological College</strong> for proper assistance and coordination.</p>
+      <p>Claim approval is subject to verification. Please bring a valid school ID and be ready to provide proof of ownership before an item is released.</p>
+    </div>
+  </section>
+
+  <section class="section about-section" id="about">
+    <div class="section-heading">
+      <span class="eyebrow">ABOUT CAMPUSFIND</span>
+      <h2>Connecting people with their belongings.</h2>
+      <p>CampusFind is a Lost and Found Portal concept for the Pateros Technological College community. It helps organize reports and claim requests in one convenient place.</p>
+    </div>
+  </section>
+</main>
+
+<section id="adminLoginPage" class="admin-page hidden">
+  <div class="login-card">
+    <div class="brand-icon">CF</div>
+    <span class="eyebrow">CAMPUSFIND ADMIN</span>
+    <h2>Administrator Login</h2>
+    <p>Sign in to manage reports and claim requests.</p>
+    <form id="adminLoginForm">
+      <div class="field">
+        <label for="adminUsername">Username</label>
+        <input id="adminUsername" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <input id="adminPassword" type="password" required autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary btn-block" type="submit">Log In</button>
+      <p id="loginMessage" class="form-message" aria-live="polite"></p>
+    </form>
+    <button class="text-button" id="backHome" type="button">← Back to Website</button>
+  </div>
+</section>
+
+<section id="adminDashboard" class="admin-page hidden">
+  <div class="admin-top">
+    <div>
+      <span class="eyebrow">ADMINISTRATION</span>
+      <h1>CampusFind Dashboard</h1>
+      <p>Manage item reports and verify claim requests.</p>
+    </div>
+    <button class="btn btn-outline" id="logoutAdmin">Log Out</button>
+  </div>
+
+  <div class="stats-grid">
+    <article class="stat-card"><span>Total Reports</span><strong id="totalReports">0</strong></article>
+    <article class="stat-card"><span>Total Claims</span><strong id="totalClaims">0</strong></article>
+    <article class="stat-card"><span>Pending Claims</span><strong id="pendingClaims">0</strong></article>
+  </div>
+
+  <div class="admin-section">
+    <h2>Item Reports</h2>
+    <div id="adminReports" class="admin-list"></div>
+  </div>
+  <div class="admin-section">
+    <h2>Claim Requests</h2>
+    <div id="adminClaims" class="admin-list"></div>
+  </div>
+  <p class="admin-warning">Demo version: data is saved in this browser only. Use a secure database and administrator authentication before publishing.</p>
+</section>
+
+<div id="claimModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="claimModalTitle">
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="closeClaim" aria-label="Close">×</button>
+    <span class="eyebrow">CLAIM REQUEST</span>
+    <h2 id="claimModalTitle">Claim this item</h2>
+    <p id="claimItemTitle" class="muted"></p>
+    <form id="claimForm">
+      <input type="hidden" id="claimItemId">
+      <div class="field">
+        <label for="claimName">Full Name *</label>
+        <input id="claimName" required maxlength="100">
+      </div>
+      <div class="field">
+        <label for="claimStudentId">Student ID *</label>
+        <input id="claimStudentId" required maxlength="40">
+      </div>
+      <div class="field">
+        <label for="claimContact">Contact Number *</label>
+        <input id="claimContact" type="tel" required maxlength="20" placeholder="09XXXXXXXXX">
+      </div>
+      <div class="field">
+        <label for="claimProof">Proof of Ownership *</label>
+        <textarea id="claimProof" required maxlength="500" rows="3" placeholder="Describe a detail that can help verify that the item belongs to you."></textarea>
+      </div>
+      <p class="privacy-note">Your personal information and proof are visible to the administrator only in this demo. Do not include passwords or highly sensitive information.</p>
+      <button type="submit" class="btn btn-primary btn-block">Submit Claim Request</button>
+      <p id="claimMessage" class="form-message" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<footer class="footer">
+  <strong>CampusFind | Pateros Technological College</strong>
+  <p>Lost and Found Portal · Helping the PTC community</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
